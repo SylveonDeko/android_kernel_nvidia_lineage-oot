@@ -9,6 +9,15 @@ alias(
     actual = "//vendor/nvidia/kernel:kernel_aarch64",
 )
 
+# Gpu
+ddk_module(
+    name = "panel-jdi-58-1440-810",
+    srcs = ["drivers/gpu/drm/panel/panel-jdi-58-1440-810.c"],
+    out = "panel-jdi-58-1440-810.ko",
+    kernel_build = ":kernel",
+)
+
+
 # Hid
 ddk_module(
     name = "hid-nvidia-shield-oot",
