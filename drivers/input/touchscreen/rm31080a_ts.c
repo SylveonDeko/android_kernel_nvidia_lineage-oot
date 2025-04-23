@@ -3958,7 +3958,7 @@ static void rm_tch_spi_shutdown(struct spi_device *spi)
 		regulator_disable(ts->regulator_1v8);
 }
 
-static int rm_tch_spi_remove(struct spi_device *spi)
+static void rm_tch_spi_remove(struct spi_device *spi)
 {
 	struct rm_tch_ts *ts = spi_get_drvdata(spi);
 
@@ -3995,8 +3995,6 @@ static int rm_tch_spi_remove(struct spi_device *spi)
 	}
 	kfree(ts);
 	spi_set_drvdata(spi, NULL);
-
-	return RETURN_OK;
 }
 
 static int rm_tch_regulator_init(struct rm_tch_ts *ts)
