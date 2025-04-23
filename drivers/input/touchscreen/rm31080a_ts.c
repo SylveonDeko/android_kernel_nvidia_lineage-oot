@@ -3366,7 +3366,7 @@ static void rm_tch_early_resume(struct early_suspend *es)
 
 /* NVIDIA 20121026 */
 /* support to disable power and clock when display is off */
-static int rm_tch_input_enable(struct input_dev *in_dev)
+/*static int rm_tch_input_enable(struct input_dev *in_dev)
 {
 	int error = RETURN_OK;
 
@@ -3392,7 +3392,7 @@ static int rm_tch_input_disable(struct input_dev *in_dev)
 		dev_err(ts->dev, "Raydium - %s : failed\n", __func__);
 
 	return error;
-}
+}*/
 
 #if defined(CONFIG_TRUSTED_LITTLE_KERNEL)
 /*===========================================================================*/
@@ -3567,9 +3567,9 @@ struct rm_tch_ts *rm_tch_input_init(struct device *dev, unsigned int irq,
 	input_dev->dev.parent = dev;
 	input_dev->id.bustype = bops->bustype;
 
-	input_dev->enable = rm_tch_input_enable;
+	/*input_dev->enable = rm_tch_input_enable;
 	input_dev->disable = rm_tch_input_disable;
-	input_dev->enabled = true;
+	input_dev->enabled = true;*/
 	input_dev->open = rm_tch_input_open;
 	input_dev->close = rm_tch_input_close;
 	input_dev->hint_events_per_packet = 256U;
