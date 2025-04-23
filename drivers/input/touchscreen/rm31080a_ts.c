@@ -2933,7 +2933,9 @@ static irqreturn_t rm_tch_irq(int irq, void *handle)
 
 	if (/*g_st_ctrl.u8_power_mode &&*/
 		(g_st_ts.u8_scan_mode_state == RM_SCAN_IDLE_MODE)) {
+#ifdef MSC_ACTIVITY
 		input_event(g_input_dev, EV_MSC, MSC_ACTIVITY, 1);
+#endif
 #if (INPUT_PROTOCOL_CURRENT_SUPPORT == INPUT_PROTOCOL_TYPE_B)
 		input_sync(g_input_dev);
 #endif
@@ -3573,7 +3575,9 @@ struct rm_tch_ts *rm_tch_input_init(struct device *dev, unsigned int irq,
 	input_dev->hint_events_per_packet = 256U;
 
 	input_set_drvdata(input_dev, ts);
+#ifdef MSC_ACTIVITY
 	input_set_capability(input_dev, EV_MSC, MSC_ACTIVITY);
+#endif
 
 #if (INPUT_PROTOCOL_CURRENT_SUPPORT == INPUT_PROTOCOL_TYPE_A)
 	__set_bit(EV_ABS, input_dev->evbit);
