@@ -3444,7 +3444,7 @@ static struct rm_spi_ts_platform_data *rm_ts_parse_dt(struct device *dev,
 	if (!pdata)
 		return ERR_PTR(-ENOMEM);
 
-	pdata->gpio_reset = of_get_named_gpio_flags(np, "reset-gpio", 0, NULL);
+	pdata->gpio_reset = of_get_named_gpio(np, "reset-gpio", 0);
 	if (!gpio_is_valid(pdata->gpio_reset)) {
 		dev_err(dev, "Invalid reset-gpio\n");
 		return ERR_PTR(-EINVAL);
