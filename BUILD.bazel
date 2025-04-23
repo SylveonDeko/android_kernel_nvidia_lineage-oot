@@ -9,6 +9,16 @@ alias(
     actual = "//vendor/nvidia/kernel:kernel_aarch64",
 )
 
+# Common headers
+ddk_headers(
+    name = "common_headers",
+    hdrs = glob([
+        "include/linux/**/*.h",
+    ]),
+    includes = ["include",],
+)
+
+
 # Gpu
 ddk_module(
     name = "panel-jdi-58-1440-810",
@@ -24,4 +34,26 @@ ddk_module(
     srcs = ["drivers/hid/hid-nvidia-shield-oot.c"],
     out = "hid-nvidia-shield-oot.ko",
     kernel_build = ":kernel",
+)
+
+
+# Input
+ddk_module(
+    name = "rm31080a_ctrl",
+    srcs = ["drivers/input/touchscreen/rm31080a_ctrl.c"],
+    out = "rm31080a_ctrl.ko",
+    kernel_build = ":kernel",
+    deps = [
+        ":common_headers",
+    ],
+)
+ddk_module(
+    name = "rm31080a_ts",
+    srcs = ["drivers/input/touchscreen/rm31080a_ts.c"],
+    out = "rm31080a_ts.ko",
+    kernel_build = ":kernel",
+    deps = [
+        ":common_headers",
+        ":rm31080a_ctrl",
+    ],
 )
