@@ -38,7 +38,9 @@
 #include <linux/random.h>	/* random32() */
 #include <linux/suspend.h>	/* pm_notifier */
 #include <linux/workqueue.h>
+#ifdef CONFIG_WAKELOCK
 #include <linux/wakelock.h> /* wakelock */
+#endif
 #include <linux/regulator/consumer.h> /* regulator & voltage */
 #include <linux/clk.h> /* clock */
 #ifdef CONFIG_HAS_EARLYSUSPEND
@@ -185,7 +187,9 @@ struct rm31080a_ts_para {
 	u8 u8_ns_sel;
 	u8 u8_ns_rpt;
 #endif
+#ifdef CONFIG_WAKELOCK
 	struct wake_lock wakelock_initialization;
+#endif
 
 	struct mutex mutex_scan_mode;
 	struct mutex mutex_ns_mode;
@@ -3043,8 +3047,10 @@ void rm_tch_set_variable(unsigned int index, unsigned int arg)
 			rm_printk("Raydium - SET_SPI_UNLOCK\n");
 		break;
 	case RM_VARIABLE_SET_WAKE_UNLOCK:
+#ifdef CONFIG_WAKELOCK
 		if (wake_lock_active(&g_st_ts.wakelock_initialization))
 			wake_unlock(&g_st_ts.wakelock_initialization);
+#endif
 		break;
 #if ENABLE_FREQ_HOPPING
 	case RM_VARIABLE_DPW:
@@ -3155,8 +3161,10 @@ static void rm_tch_init_ts_structure(void)
 		create_singlethread_workqueue("rm_idle_work");
 	INIT_WORK(&g_st_ts.rm_timer_work, rm_timer_work_handler);
 
+#ifdef CONFIG_WAKELOCK
 	wake_lock_init(&g_st_ts.wakelock_initialization,
 		WAKE_LOCK_SUSPEND, "TouchInitialLock");
+#endif
 
 	mutex_init(&g_st_ts.mutex_scan_mode);
 	mutex_init(&g_st_ts.mutex_ns_mode);
@@ -3296,10 +3304,12 @@ static int rm_tch_resume(struct rm_tch_ts *ts)
 {
 	if (g_st_ts.b_init_service) {
 		dev_info(ts->dev, "Raydium - Enable input device\n");
+#ifdef CONFIG_WAKELOCK
 		if (wake_lock_active(&g_st_ts.wakelock_initialization))
 			wake_unlock(&g_st_ts.wakelock_initialization);
 		wake_lock_timeout(&g_st_ts.wakelock_initialization,
 			TCH_WAKE_LOCK_TIMEOUT);
+#endif
 		rm_ctrl_resume(ts);
 	}
 	return RETURN_OK;
@@ -3788,8 +3798,10 @@ static long dev_ioctl(struct file *file,
 		g_st_ts.b_calc_finish = 1;
 		if (g_st_ts.u8_resume_cnt)	/* In case issued by boot-up*/
 			g_st_ts.u8_resume_cnt--;
+#ifdef CONFIG_WAKELOCK
 		if (wake_lock_active(&g_st_ts.wakelock_initialization))
 			wake_unlock(&g_st_ts.wakelock_initialization);
+#endif
 #if (ISR_POST_HANDLER == KTHREAD)
 		if (!g_st_ts.b_irq_thread_alive) {
 			g_st_ts.irq_thread_sched.sched_priority =
@@ -3965,7 +3977,9 @@ static int rm_tch_spi_remove(struct spi_device *spi)
 		destroy_workqueue(g_st_ts.rm_workqueue);
 #endif
 
+#ifdef CONFIG_WAKELOCK
 	wake_lock_destroy(&g_st_ts.wakelock_initialization);
+#endif
 
 	mutex_destroy(&g_st_ts.mutex_scan_mode);
 	mutex_destroy(&g_st_ts.mutex_ns_mode);
