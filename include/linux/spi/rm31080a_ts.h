@@ -20,8 +20,8 @@
  ***************************************************************************/
 #define RETURN_OK				0
 #define RETURN_FAIL				1
-#define TRUE					1
-#define FALSE					0
+#define RM_TRUE					1
+#define RM_FALSE				0
 #define DEBUG_DRIVER			0x01
 #define DEBUG_REGISTER			0x02
 #define DEBUG_KTHREAD			0x04

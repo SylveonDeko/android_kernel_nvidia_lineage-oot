@@ -952,11 +952,11 @@ void rm_tch_ctrl_set_baseline(u8 *arg, u16 u16Len)
 {
 	ssize_t missing;
 
-	b_bl_updated = FALSE;
+	b_bl_updated = RM_FALSE;
 	missing = copy_from_user(g_u8_update_baseline, arg, u16Len);
 	if (missing)
 		return;
-	b_bl_updated = TRUE;
+	b_bl_updated = RM_TRUE;
 }
 
 static int rm_tch_write_image_data(void)
@@ -990,7 +990,7 @@ void rm_tch_ctrl_enter_auto_mode(void)
 
 	if (b_bl_updated) {
 		rm_tch_write_image_data();
-		b_bl_updated = FALSE;
+		b_bl_updated = RM_FALSE;
 	}
 
 	rm_set_repeat_times(g_st_ctrl.u8_idle_digital_repeat_times);
@@ -1894,8 +1894,8 @@ static int rm_tch_queue_get_current_count(void)
 static int rm_tch_queue_is_empty(void)
 {
 	if (g_st_q.u16_rear == g_st_q.u16_front)
-		return TRUE;
-	return FALSE;
+		return RM_TRUE;
+	return RM_FALSE;
 }
 
 /*=============================================================================
@@ -1912,12 +1912,12 @@ static int rm_tch_queue_is_full(void)
 	u16 u16_front = g_st_q.u16_front;
 
 	if (g_st_q.u16_rear + 1 == u16_front)
-		return TRUE;
+		return RM_TRUE;
 
 	if ((g_st_q.u16_rear == (QUEUE_COUNT - 1)) && (u16_front == 0))
-		return TRUE;
+		return RM_TRUE;
 
-	return FALSE;
+	return RM_FALSE;
 }
 
 static void *rm_tch_enqueue_start(void)
@@ -2233,12 +2233,12 @@ static u8 rm_timer_trigger_function(void)
 	static u32 u32TimerCnt; /*= 0; remove by checkpatch*/
 
 	if (u32TimerCnt++ < g_st_ctrl.u8_timer_trigger_scale) {
-		return FALSE;
+		return RM_FALSE;
 	} else {
 		/*rm_printk("Raydium - rm_timer_work_handler:%x,%x\n",
 		g_st_ctrl.u8_timer_trigger_scale, u32TimerCnt);*/
 		u32TimerCnt = 0;
-		return TRUE;
+		return RM_TRUE;
 	}
 }
 
