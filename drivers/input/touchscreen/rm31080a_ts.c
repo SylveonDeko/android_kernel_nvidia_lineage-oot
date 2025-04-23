@@ -319,7 +319,7 @@ static void rm_ctrl_suspend(struct rm_tch_ts *ts);
 static void rm_ctrl_resume(struct rm_tch_ts *ts);
 static void rm_ctrl_watchdog_func(unsigned int u32_enable);
 static void init_ts_timer(void);
-static void ts_timer_triggle_function(unsigned long option);
+static void ts_timer_triggle_function(struct timer_list *t);
 #if ENABLE_QUEUE_GUARD
 static void rm_tch_ctrl_slowscan(u32 level);
 #endif
@@ -1475,9 +1475,9 @@ static int rm_tch_cmd_process(u8 u8_sel_case,
 				if (!timer_pending(&ts_timer_triggle))
 					add_timer(&ts_timer_triggle);
 			} else if (p_cmd_tbl[_SUB_CMD] == KRL_SUB_CMD_DEL_TIMER)
-				/*del_timer of an inactive timer returns 0,
-				del_timer of an active timer returns 1*/
-				del_timer(&ts_timer_triggle);
+				/*timer_delete of an inactive timer returns 0,
+				timer_delete of an active timer returns 1*/
+				timer_delete(&ts_timer_triggle);
 			else
 				ret = RETURN_FAIL;
 			break;
@@ -3916,13 +3916,10 @@ static const struct rm_tch_bus_ops rm_tch_spi_bus_ops = {
 
 static void init_ts_timer(void)
 {
-	init_timer(&ts_timer_triggle);
-	ts_timer_triggle.function = ts_timer_triggle_function;
-	ts_timer_triggle.data = ((unsigned long) 0);
-	ts_timer_triggle.expires = jiffies + TS_TIMER_PERIOD;
+	timer_setup(&ts_timer_triggle, ts_timer_triggle_function, 0);
 }
 
-static void ts_timer_triggle_function(unsigned long option)
+static void ts_timer_triggle_function(struct timer_list *t)
 {
 	queue_work(g_st_ts.rm_timer_workqueue, &g_st_ts.rm_timer_work);
 	ts_timer_triggle.expires = jiffies + TS_TIMER_PERIOD;
@@ -3965,7 +3962,7 @@ static int rm_tch_spi_remove(struct spi_device *spi)
 {
 	struct rm_tch_ts *ts = spi_get_drvdata(spi);
 
-	del_timer(&ts_timer_triggle);
+	timer_delete(&ts_timer_triggle);
 	if (g_st_ts.rm_timer_workqueue)
 		destroy_workqueue(g_st_ts.rm_timer_workqueue);
 
