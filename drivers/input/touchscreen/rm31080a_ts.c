@@ -52,9 +52,6 @@
 #include <linux/spi/rm31080a_ts.h>
 #include <linux/spi/rm31080a_ctrl.h>
 
-#define CREATE_TRACE_POINTS
-#include <trace/events/touchscreen_raydium.h>
-
 #if (INPUT_PROTOCOL_CURRENT_SUPPORT == INPUT_PROTOCOL_TYPE_B)
 #include <linux/input/mt.h>
 #endif
@@ -2933,8 +2930,6 @@ static void rm_tch_input_close(struct input_dev *input)
 static irqreturn_t rm_tch_irq(int irq, void *handle)
 {
 	g_st_ts.u32_watch_dog_cnt = 0;
-
-	trace_touchscreen_raydium_irq("Raydium_interrupt");
 
 	if (/*g_st_ctrl.u8_power_mode &&*/
 		(g_st_ts.u8_scan_mode_state == RM_SCAN_IDLE_MODE)) {
