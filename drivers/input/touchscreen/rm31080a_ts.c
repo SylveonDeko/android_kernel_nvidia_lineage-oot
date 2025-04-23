@@ -1428,9 +1428,9 @@ static int rm_tch_cmd_process(u8 u8_sel_case,
 			if (p_cmd_tbl[_SUB_CMD] == KRL_SUB_CMD_SET_CLK) {
 				if (ts && ts->clk) {
 					if (p_cmd_tbl[_DATA])
-						ret = clk_enable(ts->clk);
+						ret = clk_prepare_enable(ts->clk);
 					else {
-						clk_disable(ts->clk);
+						clk_disable_unprepare(ts->clk);
 						ret = RETURN_OK;
 					}
 				} else {
@@ -3879,9 +3879,9 @@ static long dev_ioctl(struct file *file,
 		rm_printk("Raydium - Clock set to %d\n", (u32)arg);
 		if (ts && ts->clk) {
 			if ((u32)arg)
-				ret = clk_enable(ts->clk);
+				ret = clk_prepare_enable(ts->clk);
 			else
-				clk_disable(ts->clk);
+				clk_disable_unprepare(ts->clk);
 		} else
 			dev_err(&g_spi->dev, "Raydium - %s : No clk handler!\n",
 				__func__);
