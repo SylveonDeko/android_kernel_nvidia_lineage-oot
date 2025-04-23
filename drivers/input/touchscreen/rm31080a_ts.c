@@ -1790,7 +1790,7 @@ static u32 rm_tch_get_spi_lock_status(u8 *p)
 /*===========================================================================*/
 static int rm_tch_ts_send_signal(int pid, int i_info)
 {
-	struct siginfo info;
+	struct kernel_siginfo info;
 	struct task_struct *t;
 	int ret = RETURN_OK;
 
@@ -1800,7 +1800,7 @@ static int rm_tch_ts_send_signal(int pid, int i_info)
 	}
 
 	/* send the signal */
-	memset(&info, 0, sizeof(struct siginfo));
+	memset(&info, 0, sizeof(struct kernel_siginfo));
 	info.si_signo = RM_TS_SIGNAL;
 	info.si_code = SI_QUEUE;
 	/*
