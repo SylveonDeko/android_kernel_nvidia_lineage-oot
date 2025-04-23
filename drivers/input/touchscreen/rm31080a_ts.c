@@ -2932,7 +2932,7 @@ static irqreturn_t rm_tch_irq(int irq, void *handle)
 	g_st_ts.u32_watch_dog_cnt = 0;
 
 	if (/*g_st_ctrl.u8_power_mode &&*/
-		(g_st_ts.u8_scan_mode_state == RM_SCAN_IDLE_MODE)) {
+		g_st_ts.u8_scan_mode_state == RM_SCAN_IDLE_MODE) {
 #ifdef MSC_ACTIVITY
 		input_event(g_input_dev, EV_MSC, MSC_ACTIVITY, 1);
 #endif
