@@ -4179,8 +4179,14 @@ static const struct dev_pm_ops rm_pm_ops = {
 };
 #endif
 
+static const struct spi_device_id raydium_spi_id[] = {
+	{ "rm_ts_spidev" },
+	{ /* sentinel */ }
+};
+MODULE_DEVICE_TABLE(spi, raydium_spi_id);
+
 static const struct of_device_id rm_ts_dt_match[] = {
-	{ .compatible = "raydium, rm_ts_spidev" },
+	{ .compatible = "raydium,rm_ts_spidev" },
 	{ },
 };
 MODULE_DEVICE_TABLE(of, rm_ts_dt_match);
@@ -4198,6 +4204,7 @@ static struct spi_driver rm_tch_spi_driver = {
 #endif
 	},
 	.probe = rm_tch_spi_probe,
+	.id_table = raydium_spi_id,
 	.remove = rm_tch_spi_remove,
 	.shutdown = rm_tch_spi_shutdown,
 };
