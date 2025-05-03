@@ -72,3 +72,13 @@ ddk_module(
     out = "max77620-restart.ko",
     kernel_build = ":kernel",
 )
+
+
+# Sound
+ddk_module(
+    name = "snd-soc-es755",
+    srcs = glob(["sound/soc/codecs/audience/*.c"]),
+    hdrs = glob(["sound/soc/codecs/audience/*.h"]),
+    out = "snd-soc-es755.ko",
+    kernel_build = ":kernel",
+)
