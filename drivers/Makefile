@@ -3,3 +3,4 @@
 
 obj-m += gpu/drm/panel/
 obj-m += hid/
+obj-m += power/supply/

@@ -57,3 +57,12 @@ ddk_module(
         ":rm31080a_ctrl",
     ],
 )
+
+
+# Power
+ddk_module(
+    name = "lc709203f_battery",
+    srcs = ["drivers/power/supply/lc709203f_battery.c"],
+    out = "lc709203f_battery.ko",
+    kernel_build = ":kernel",
+)
