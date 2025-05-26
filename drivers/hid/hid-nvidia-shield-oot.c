@@ -14,6 +14,7 @@
 
 #define USB_VENDOR_ID_NVIDIA			0x0955
 #define USB_DEVICE_ID_NVIDIA_LOKI_CONTROLLER	0x7205
+#define USB_DEVICE_ID_NVIDIA_BLAKE_CONTROLLER	0x7210
 
 
 #define android_map_key(c) hid_map_usage(hi, usage, bit, max, EV_KEY, (c))
@@ -42,6 +43,10 @@ struct loki_device {
 	/* Resources */
 	uint8_t power_brightness;
 	uint8_t buttons_brightness;
+};
+
+struct blake_device {
+	struct shield_device base;
 };
 
 #define UC_COMM_ON	0x10
@@ -124,6 +129,24 @@ static void loki_destroy(struct loki_device *loki)
 {
 	led_classdev_unregister(&loki->power_led);
 	led_classdev_unregister(&loki->buttons_led);
+}
+
+static struct shield_device *blake_create(struct hid_device *hdev)
+{
+	struct shield_device *shield_dev;
+	struct blake_device *blake;
+
+	blake = devm_kzalloc(&hdev->dev, sizeof(*blake), GFP_KERNEL);
+	if (!blake)
+		return ERR_PTR(-ENOMEM);
+
+	shield_dev = &blake->base;
+	shield_dev->hdev = hdev;
+
+	hid_set_drvdata(hdev, shield_dev);
+
+	hid_info(hdev, "Registered Blake controller\n");
+	return shield_dev;
 }
 
 static int shield_input_mapped(struct hid_device *hdev, struct hid_input *hi,
@@ -213,6 +236,10 @@ static int shield_probe(struct hid_device *hdev, const struct hid_device_id *id)
 	case USB_DEVICE_ID_NVIDIA_LOKI_CONTROLLER:
 		shield_dev = loki_create(hdev);
 		break;
+
+	case USB_DEVICE_ID_NVIDIA_BLAKE_CONTROLLER:
+		shield_dev = blake_create(hdev);
+		break;
 	}
 
 	if (unlikely(!shield_dev)) {
@@ -258,6 +285,8 @@ static void shield_remove(struct hid_device *hdev)
 static const struct hid_device_id shield_devices[] = {
 	{ HID_USB_DEVICE(USB_VENDOR_ID_NVIDIA,
 			 USB_DEVICE_ID_NVIDIA_LOKI_CONTROLLER) },
+	{ HID_USB_DEVICE(USB_VENDOR_ID_NVIDIA,
+			 USB_DEVICE_ID_NVIDIA_BLAKE_CONTROLLER) },
 	{ }
 };
 MODULE_DEVICE_TABLE(hid, shield_devices);
