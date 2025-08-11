@@ -66,3 +66,9 @@ ddk_module(
     out = "lc709203f_battery.ko",
     kernel_build = ":kernel",
 )
+ddk_module(
+    name = "max77620-restart",
+    srcs = ["drivers/power/reset/max77620-restart.c"],
+    out = "max77620-restart.ko",
+    kernel_build = ":kernel",
+)
