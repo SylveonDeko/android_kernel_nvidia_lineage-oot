@@ -5,3 +5,4 @@
 #
 
 obj-m += max77620-restart.o
+obj-m += palmas-poweroff.o

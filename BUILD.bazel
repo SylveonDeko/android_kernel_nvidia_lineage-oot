@@ -72,6 +72,12 @@ ddk_module(
     out = "max77620-restart.ko",
     kernel_build = ":kernel",
 )
+ddk_module(
+    name = "palmas-poweroff",
+    srcs = ["drivers/power/reset/palmas-poweroff.c"],
+    out = "palmas-poweroff.ko",
+    kernel_build = ":kernel",
+)
 
 
 # Sound
