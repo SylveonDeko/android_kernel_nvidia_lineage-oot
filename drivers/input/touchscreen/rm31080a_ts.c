@@ -497,30 +497,6 @@ static void rm_tch_generate_event(struct rm_tch_ts *dev_touch,
 }
 
 /*===========================================================================*/
-static void raydium_change_scan_mode(u8 u8_touch_count)
-{
-	static u32 u32_no_touch_count; /*= 0; remove by checkpatch*/
-	u16 u16_nt_count_thd;
-
-	u16_nt_count_thd = (u16)g_st_ctrl.u8_time2idle * 100;
-
-	if (u8_touch_count) {
-		u32_no_touch_count = 0;
-		return;
-	}
-
-	if (u32_no_touch_count < u16_nt_count_thd)
-		u32_no_touch_count++;
-	else {
-		mutex_lock(&g_st_ts.mutex_scan_mode);
-		if (g_st_ts.u8_scan_mode_state == RM_SCAN_ACTIVE_MODE) {
-			g_st_ts.u8_scan_mode_state = RM_SCAN_PRE_IDLE_MODE;
-			u32_no_touch_count = 0;
-		}
-		mutex_unlock(&g_st_ts.mutex_scan_mode);
-	}
-}
-
 #if (INPUT_PROTOCOL_CURRENT_SUPPORT == INPUT_PROTOCOL_TYPE_A)
 void raydium_report_pointer(void *p)
 {
@@ -635,9 +611,6 @@ void raydium_report_pointer(void *p)
 		g_st_ts.u8_last_touch_count = sp_tp->uc_touch_count;
 		input_sync(g_input_dev);
 	}
-
-	/*if (g_st_ctrl.u8_power_mode)
-		raydium_change_scan_mode(sp_tp->uc_touch_count); */
 
 	kfree(sp_tp);
 }
@@ -810,9 +783,6 @@ static void raydium_report_pointer(void *p)
 		g_st_ts.u8_last_touch_count = sp_tp->uc_touch_count;
 		input_sync(g_input_dev);
 	}
-	/*if (g_st_ctrl.u8_power_mode)
-		raydium_change_scan_mode(sp_tp->uc_touch_count);*/
-
 	kfree(sp_tp);
 }
 #endif	/* End of INPUT_PROTOCOL_CURRENT_SUPPORT */
