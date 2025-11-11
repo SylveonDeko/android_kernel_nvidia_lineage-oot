@@ -497,7 +497,7 @@ static void rm_tch_generate_event(struct rm_tch_ts *dev_touch,
 }
 
 /*===========================================================================*/
-void raydium_change_scan_mode(u8 u8_touch_count)
+static void raydium_change_scan_mode(u8 u8_touch_count)
 {
 	static u32 u32_no_touch_count; /*= 0; remove by checkpatch*/
 	u16 u16_nt_count_thd;
@@ -642,7 +642,7 @@ void raydium_report_pointer(void *p)
 	kfree(sp_tp);
 }
 #else /*(INPUT_PROTOCOL_CURRENT_SUPPORT == INPUT_PROTOCOL_TYPE_B)*/
-void raydium_report_pointer(void *p)
+static void raydium_report_pointer(void *p)
 {
 	unsigned int target_abs_mt_tool = MT_TOOL_FINGER;
 	unsigned int target_key_evt_btn_tool = BTN_TOOL_FINGER;
@@ -945,7 +945,7 @@ static int rm_tch_read_image_data(unsigned char *p)
 	return ret;
 }
 
-void rm_tch_ctrl_set_baseline(u8 *arg, u16 u16Len)
+static void rm_tch_ctrl_set_baseline(u8 *arg, u16 u16Len)
 {
 	ssize_t missing;
 
@@ -965,7 +965,7 @@ static int rm_tch_write_image_data(void)
 }
 
 #if ENABLE_FREQ_HOPPING
-void rm_set_ns_para(u8 u8Idx, u8 *u8Para)
+static void rm_set_ns_para(u8 u8Idx, u8 *u8Para)
 {
 	int ii;
 	struct rm_tch_ts *ts = input_get_drvdata(g_input_dev);
@@ -977,7 +977,7 @@ void rm_set_ns_para(u8 u8Idx, u8 *u8Para)
 }
 #endif
 
-void rm_tch_ctrl_enter_auto_mode(void)
+static void rm_tch_ctrl_enter_auto_mode(void)
 {
 	g_st_ctrl.u8_idle_mode_check &= ~0x01;
 
@@ -994,7 +994,7 @@ void rm_tch_ctrl_enter_auto_mode(void)
 	rm_tch_cmd_process(1, g_st_cmd_set_idle, NULL);
 }
 
-void rm_tch_ctrl_leave_auto_mode(void)
+static void rm_tch_ctrl_leave_auto_mode(void)
 {
 	struct rm_tch_ts *ts = input_get_drvdata(g_input_dev);
 
@@ -1015,7 +1015,7 @@ void rm_tch_ctrl_leave_auto_mode(void)
 		rm_printk("Raydium - Leave Auto Scan Mode\n");
 }
 
-void rm_ctrl_pause_auto_mode(void)
+static void rm_ctrl_pause_auto_mode(void)
 {
 	rm_tch_cmd_process(0, g_st_cmd_pause_auto, NULL);
 }
@@ -1026,7 +1026,7 @@ int rm_tch_ctrl_clear_int(void)
 }
 
 
-int rm_tch_ctrl_wait_for_scan_finish(u8 u8Idx)
+static int rm_tch_ctrl_wait_for_scan_finish(u8 u8Idx)
 {
 	int i;
 
@@ -1131,7 +1131,7 @@ static u32 rm_tch_ctrl_configure(void)
 	return u32_flag;
 }
 
-int KRL_CMD_CONFIG_1V8_Handler(u8 u8_cmd, u8 u8_on_off, struct rm_tch_ts *ts)
+static int KRL_CMD_CONFIG_1V8_Handler(u8 u8_cmd, u8 u8_on_off, struct rm_tch_ts *ts)
 {
 	int ret = RETURN_FAIL;
 	struct rm_spi_ts_platform_data *pdata;
@@ -1170,7 +1170,7 @@ int KRL_CMD_CONFIG_1V8_Handler(u8 u8_cmd, u8 u8_on_off, struct rm_tch_ts *ts)
 	return ret;
 }
 
-int KRL_CMD_CONFIG_3V3_Handler(u8 u8_cmd, u8 u8_on_off, struct rm_tch_ts *ts)
+static int KRL_CMD_CONFIG_3V3_Handler(u8 u8_cmd, u8 u8_on_off, struct rm_tch_ts *ts)
 {
 	int ret = RETURN_FAIL;
 	struct rm_spi_ts_platform_data *pdata;
@@ -1209,7 +1209,7 @@ int KRL_CMD_CONFIG_3V3_Handler(u8 u8_cmd, u8 u8_on_off, struct rm_tch_ts *ts)
 	return ret;
 }
 
-void rm_show_kernel_tbl_name(u8 *p_cmd_tbl)
+static void rm_show_kernel_tbl_name(u8 *p_cmd_tbl)
 {
 	char target_table_name[32];
 
@@ -1585,7 +1585,7 @@ static int rm_tch_cmd_process(u8 u8_sel_case,
 	return ret;
 }
 
-int rm_set_kernel_tbl(int i_func_idx, u8 *p_u8_src)
+static int rm_set_kernel_tbl(int i_func_idx, u8 *p_u8_src)
 {
 	ssize_t missing;
 	u16 u16_len = 0;
@@ -2463,7 +2463,7 @@ static ssize_t rm_tch_smooth_level_store(struct device *dev,
 	return count;
 }
 
-void rm_set_kernel_test_para(u8 u8Idx, u8 u8Para)
+static void rm_set_kernel_test_para(u8 u8Idx, u8 u8Para)
 {
 	struct rm_tch_ts *ts = input_get_drvdata(g_input_dev);
 
@@ -2983,7 +2983,7 @@ static void rm_tch_enter_test_mode(u8 flag)
 		g_st_ts.u8_selftest_status = RM_SELF_TEST_STATUS_FINISH;
 }
 
-void rm_tch_set_variable(unsigned int index, unsigned int arg)
+static void rm_tch_set_variable(unsigned int index, unsigned int arg)
 {
 #if ENABLE_FREQ_HOPPING
 	ssize_t missing;
@@ -3504,7 +3504,7 @@ exit_release_reset_gpio:
 	return ERR_PTR(ret);
 }
 
-struct rm_tch_ts *rm_tch_input_init(struct device *dev, unsigned int irq,
+static struct rm_tch_ts *rm_tch_input_init(struct device *dev, unsigned int irq,
 	const struct rm_tch_bus_ops *bops)
 {
 	struct rm_tch_ts *ts;
