@@ -18,6 +18,12 @@ ddk_headers(
     includes = ["include",],
 )
 
+# Uapi headers
+ddk_headers(
+    name = "uapi_headers",
+    hdrs = glob(["include/uapi/**/*.h"]),
+)
+
 
 # Gpu
 ddk_module(
@@ -87,4 +93,21 @@ ddk_module(
     hdrs = glob(["sound/soc/codecs/audience/*.h"]),
     out = "snd-soc-es755.ko",
     kernel_build = ":kernel",
+)
+
+
+# TEE
+ddk_module(
+    name = "tlk",
+    srcs = glob([
+        "drivers/tee/tlk/*.c",
+        "drivers/tee/tlk/*.S",
+    ]),
+    hdrs = glob(["drivers/tee/tlk/*.h"]),
+    out = "tlk.ko",
+    kernel_build = ":kernel",
+    deps = [
+        ":common_headers",
+        ":uapi_headers",
+    ],
 )
