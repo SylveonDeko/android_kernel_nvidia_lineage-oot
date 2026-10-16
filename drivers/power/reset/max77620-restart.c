@@ -8,6 +8,8 @@
 #include <linux/reboot.h>
 #include <linux/regmap.h>
 
+#define MAX77620_ONOFFCNFG2_WK_ALARM2	BIT(1)
+
 static int max77620_restart_notify(struct sys_off_data *data)
 {
 	struct max77620_chip *max77620 = data->cb_data;
@@ -39,9 +41,49 @@ static int max77620_restart_notify(struct sys_off_data *data)
 	return NOTIFY_DONE;
 }
 
+static int max77620_power_off_notify(struct sys_off_data *data)
+{
+	struct max77620_chip *max77620 = data->cb_data;
+	int ret;
+
+	ret = regmap_update_bits(max77620->rmap, MAX77620_REG_ONOFFCNFG2,
+				 MAX77620_ONOFFCNFG2_SFT_RST_WK |
+				 MAX77620_ONOFFCNFG2_WK_ALARM1 |
+				 MAX77620_ONOFFCNFG2_WK_ALARM2, 0);
+	if (ret < 0) {
+		dev_err(max77620->dev, "%s: failed to clear wake events: %d\n",
+			__func__, ret);
+		return NOTIFY_DONE;
+	}
+
+	ret = regmap_update_bits(max77620->rmap, MAX77620_REG_ONOFFCNFG1,
+				 MAX77620_ONOFFCNFG1_SFT_RST,
+				 MAX77620_ONOFFCNFG1_SFT_RST);
+	if (ret < 0) {
+		dev_err(max77620->dev, "%s: failed to set SFT_RST: %d\n",
+			__func__, ret);
+		return NOTIFY_DONE;
+	}
+
+	mdelay(200);
+
+	WARN_ON(1);
+
+	return NOTIFY_DONE;
+}
+
 static int max77620_restart_probe(struct platform_device *pdev)
 {
 	struct max77620_chip *max77620 = dev_get_drvdata(pdev->dev.parent);
+	int ret;
+
+	ret = devm_register_sys_off_handler(&pdev->dev,
+					    SYS_OFF_MODE_POWER_OFF,
+					    SYS_OFF_PRIO_HIGH,
+					    max77620_power_off_notify,
+					    max77620);
+	if (ret)
+		return ret;
 
 	if (!device_property_read_bool(pdev->dev.parent, "system-power-controller"))
 		return 0;
